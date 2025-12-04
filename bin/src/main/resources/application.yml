@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: reactive-hexagonal
+  
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/reactivedb
+    username: user
+    password: password
+  
+  sql:
+    init:
+      mode: always # start the scheme
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+# Custom Config 
+application:
+  external:
+    stock-service-url: http://localhost:8081 # Wiremock
+
+# Resilience4j Config
+resilience4j:
+  circuitbreaker:
+    instances:
+      stock-service:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        slidingWindowSize: 5
