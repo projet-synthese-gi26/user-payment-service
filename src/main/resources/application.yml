@@ -10,14 +10,14 @@ spring:
       enabled: false
 
   # POSTGRESQL (R2DBC)
-#  r2dbc:
-#    url: r2dbc:postgresql://168.119.122.86:5432/yowyob
-#    username: master
-#    password: Azerty1234*
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/reactivedb
+    url: r2dbc:postgresql://168.119.122.86:5432/yowyob
     username: master
-    password: Azerty1234
+    password: Azerty1234*
+#  r2dbc:
+#    url: r2dbc:postgresql://localhost:5432/reactivedb
+#    username: master
+#    password: Azerty1234
 
   sql:
     init:
