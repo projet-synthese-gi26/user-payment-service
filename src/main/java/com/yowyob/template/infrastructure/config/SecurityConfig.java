@@ -41,6 +41,8 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         // Endpoints publics (Auth)
                         .pathMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
+                        .requestMatchers(
+                                "/actuator/**").permitAll()
                         // Endpoints protégés (Tout le reste)
                         .anyExchange().authenticated()
                 )
