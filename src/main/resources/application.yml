@@ -9,16 +9,11 @@ spring:
     compose:
       enabled: false
 
-  # POSTGRESQL (R2DBC)
+ # POSTGRESQL (R2DBC)
   r2dbc:
-    url: r2dbc:postgresql://168.119.122.86:5432/yowyob
-    username: master
-    password: Azerty1234*
-#  r2dbc:
-#    url: r2dbc:postgresql://localhost:5432/reactivedb
-#    username: master
-#    password: Azerty1234
-
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:payment_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
   sql:
     init:
       mode: always
@@ -26,15 +21,15 @@ spring:
   # REDIS CLUSTER 
   data:
     redis:
-      host: 168.119.122.86
-      port: 7000
-      password: Azerty1234*
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:7000}
+      password: ${REDIS_PASSWORD:password}
       cluster:
         enabled: false 
 
   # KAFKA 
   kafka:
-    bootstrap-servers: 168.119.122.86:9092
+    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
     consumer:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -48,7 +43,7 @@ spring:
 # CUSTOM CONFIG 
 application:
   external:
-    stock-service-url: http://168.119.122.86:8081
+    stock-service-url: http://${EXTERNAL_HOST:localhost}:8081
   security:
     jwt:
       # Générez une vraie clé en prod (ex: openssl rand -base64 64)
@@ -58,6 +53,20 @@ application:
   kafka:
     topics:
       transaction-recharge: transaction-recharge-topic
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
 
 
 # RESILIENCE4J 
