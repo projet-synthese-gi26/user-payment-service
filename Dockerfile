@@ -1,34 +1,31 @@
-# ========================
-# Stage 1: Build the JAR
-# ========================
-FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
+# --- Stage 1: Build ---
+FROM maven:3.9-eclipse-temurin-21 AS builder
 WORKDIR /app
 
-# 1. Copy pom.xml and download dependencies (cached if pom.xml doesn't change)
+# Copie du pom.xml et téléchargement des dépendances (mise en cache des layers)
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+RUN mvn dependency:go-offline
 
-# 2. Copy source code and build
+# Copie du code source et compilation
 COPY src ./src
-# We skip tests because they require running Kafka/DB which aren't available during build time
 RUN mvn clean package -DskipTests
 
-# ========================
-# Stage 2: Create the Runtime Image
-# ========================
-FROM eclipse-temurin:21-jre-alpine
+# --- Stage 2: Run ---
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-# 1. Create a non-root user for security
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
+# Création d'un utilisateur non-root pour la sécurité (Standard Tramasys)
+RUN addgroup yowyob && adduser yowyob --ingroup yowyob
+USER yowyob:yowyob
 
-# 2. Copy the JAR from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Copie du JAR depuis l'étape de build
+COPY --from=builder /app/target/*.jar app.jar
 
-# 3. Expose the port defined in your application.yml
+# Variables d'environnement par défaut
+# Note: Les variables DB_USER, DB_PASSWORD, AUTH_JWT_SECRET doivent être injectées au runtime
+ENV SPRING_PROFILES_ACTIVE=prod
+
+# Exposition du port
 EXPOSE 8091
 
-# 4. Run the application
-# We use exec form to ensure signals (like SIGTERM) are passed correctly
 ENTRYPOINT ["java", "-jar", "app.jar"]
