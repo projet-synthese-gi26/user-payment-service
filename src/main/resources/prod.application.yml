@@ -48,6 +48,11 @@ spring:
 application:
   external:
     stock-service-url: http://${EXTERNAL_HOST:localhost}:8081
+  security:
+    jwt:
+      # Générez une vraie clé en prod (ex: openssl rand -base64 64)
+      secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 3600000 # 1 heure en ms
 
   kafka:
     topics:
