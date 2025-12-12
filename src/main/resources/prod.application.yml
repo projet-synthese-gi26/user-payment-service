@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: reactive-hexagonal
+    name: user-payment-service
     
   docker:
     compose:
