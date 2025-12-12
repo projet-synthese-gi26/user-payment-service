@@ -15,6 +15,7 @@ FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
 # Création d'un utilisateur non-root pour la sécurité (Standard Tramasys)
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN addgroup yowyob && adduser yowyob --ingroup yowyob
 USER yowyob:yowyob
 
