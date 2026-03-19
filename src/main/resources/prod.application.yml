@@ -1,6 +1,14 @@
 server:
   port: 8091
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    config-url: /user-payment/v3/api-docs/swagger-config
+    url: /user-payment/v3/api-docs
+  api-docs:
+    path: /v3/api-docs
+    
 spring:
   application:
     name: user-payment-service
