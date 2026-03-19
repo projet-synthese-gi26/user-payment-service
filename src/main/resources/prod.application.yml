@@ -1,7 +1,7 @@
 server:
   port: 8091
   forward-headers-strategy: framework
-  
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
