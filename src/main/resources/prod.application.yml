@@ -1,6 +1,7 @@
 server:
   port: 8091
-
+  forward-headers-strategy: framework
+  
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -8,7 +9,7 @@ springdoc:
     url: /user-payment/v3/api-docs
   api-docs:
     path: /v3/api-docs
-    
+
 spring:
   application:
     name: user-payment-service

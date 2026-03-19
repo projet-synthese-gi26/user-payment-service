@@ -1,20 +1,38 @@
 server:
   port: 8091
+  forward-headers-strategy: framework
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    config-url: /user-payment/v3/api-docs/swagger-config
+    url: /user-payment/v3/api-docs
+  api-docs:
+    path: /v3/api-docs
 
 spring:
   application:
     name: user-payment-service
-    
+
   docker:
     compose:
       enabled: false
 
- # POSTGRESQL (R2DBC)
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME:payment}
+    user: ${DB_LIQUIBASE_USERNAME}
+    password: ${DB_LIQUIBASE_PASSWORD}
+    enabled: true
+    default-schema: ${DB_SCHEMA:public}
+    liquibase-schema: ${DB_SCHEMA:public}
+
+  # POSTGRESQL (R2DBC)
   r2dbc:
-    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:payment_db}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:password}
-     pool:
+    url: r2dbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME:payment}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    pool:
       enabled: true
       initial-size: 1
       max-size: 5
@@ -23,20 +41,25 @@ spring:
       acquire-retry: 3
       max-acquire-time: 30s
       validation-query: SELECT 1
-  sql:
-    init:
-      mode: always
 
-  # REDIS CLUSTER 
+    sql:
+      init:
+        mode: never
+
+  # REDIS CLUSTER
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:7000}
       password: ${REDIS_PASSWORD:password}
       cluster:
-        enabled: false 
+        nodes:
+          - ${REDIS_HOST:localhost}:7001
+          - ${REDIS_HOST:localhost}:7002
+          - ${REDIS_HOST:localhost}:7003
+          - ${REDIS_HOST:localhost}:7004
+          - ${REDIS_HOST:localhost}:7005
+          - ${REDIS_HOST:localhost}:7006
 
-  # KAFKA 
+  # KAFKA
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
     consumer:
@@ -49,7 +72,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-# CUSTOM CONFIG 
+# CUSTOM CONFIG
 application:
   external:
     stock-service-url: http://${EXTERNAL_HOST:localhost}:8081
@@ -77,7 +100,6 @@ management:
     export:
       prometheus:
         enabled: true
-
 
 # RESILIENCE4J 
 resilience4j:
