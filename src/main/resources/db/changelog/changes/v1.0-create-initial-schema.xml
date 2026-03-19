@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+
+    <changeSet id="v1.0-create-agents" author="user-payment-service">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="agents"/></not>
+        </preConditions>
+        <createTable tableName="agents">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uq_agents_email"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- Valeurs : ACTIVE, INACTIVE, SUSPENDED ... -->
+            <column name="status" type="VARCHAR(50)" defaultValue="ACTIVE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Index pour les lookups par email (findByEmail) -->
+    <changeSet id="v1.0-idx-agents-email" author="user-payment-service">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists tableName="agents" indexName="idx_agents_email"/></not>
+        </preConditions>
+        <createIndex tableName="agents" indexName="idx_agents_email">
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
