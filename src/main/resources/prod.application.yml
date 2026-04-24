@@ -47,17 +47,29 @@ spring:
         mode: never
 
   # REDIS CLUSTER 
-  data:
+ data:
     redis:
-      password: ${REDIS_PASSWORD:password}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
       cluster:
         nodes:
-          - ${REDIS_HOST:localhost}:7001
-          - ${REDIS_HOST:localhost}:7002
-          - ${REDIS_HOST:localhost}:7003
-          - ${REDIS_HOST:localhost}:7004
-          - ${REDIS_HOST:localhost}:7005
-          - ${REDIS_HOST:localhost}:7006
+          - redis-node-1:6379
+          - redis-node-2:6379
+          - redis-node-3:6379
+          - redis-node-4:6379
+          - redis-node-5:6379
+          - redis-node-6:6379
+        max-redirects: 3
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+        cluster:
+          refresh:
+            adaptive: true
+            period: 30s
+            dynamic-refresh-sources: false
 
   # KAFKA 
   kafka:
