@@ -47,7 +47,7 @@ spring:
         mode: never
 
   # REDIS CLUSTER 
- data:
+  data:
     redis:
       username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
